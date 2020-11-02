@@ -1,0 +1,11 @@
+@charset "utf-8";
+@import "fonts.scss";
+@import "../node_modules/bulma/sass/utilities/initial-variables";
+
+html {
+    font-family: $montserrat, sans-serif;
+}
+
+$navbar-item-img-max-height : 100px !default;
+
+@import "../node_modules/bulma/bulma";
