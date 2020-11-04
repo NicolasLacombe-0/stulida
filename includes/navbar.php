@@ -29,14 +29,14 @@
                     ?>
             <div class="navbar-item has-dropdown is-hoverable">
                 <a class="navbar-link">
-                    User name
+                    <?php echo $_SESSION['email']; ?>
                 </a>
 
                 <div class="navbar-dropdown">
                     <a class="navbar-item">
                         Profile page
                     </a>
-                    <a class="navbar-item">
+                    <a class="navbar-item" href="addadverts.php">
                         Create a new ad
                     </a>
                     <hr class="navbar-divider">
