@@ -1,9 +1,8 @@
 <?php
 
-$title = 'Fiche produit - Le Chouette Coin';
+$title = 'Advert - Stuliday';
 require 'includes/header.php';
-require 'includes/navbar.php';
 
-affichageAdvert($_GET['id']);
+affichageProduit($_GET['id']);
 
 require 'includes/footer.php';

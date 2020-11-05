@@ -1,15 +1,13 @@
 <?php
 
 require 'includes/header.php';
-require 'includes/navbar.php';
 
-$title = 'Processing -Le Chouette coin';
+$title = 'Processing - Stuliday';
 
 if ('POST' != $_SERVER['REQUEST_METHOD']) {
     echo "<div class='alert alert-danger'>ERROR La page à laquelle vous tentez d'accéder n'existe pas</div>";
 } elseif (isset($_POST['advert_submit'])) {
-    if (!empty($_POST['advert_title']) && !empty($_POST['advert_content']) && !empty($_POST['advert_price']) && !empty($_POST['advert_city']) && !empty($_POST['advert_address']) && !empty($_POST['advert_category'])) {
-
+    if (!empty($_POST['advert_title']) && !empty($_POST['advert_content']) && !empty($_POST['advert_price']) && !empty($_POST['city']) && !empty($_POST['address']) && !empty($_POST['advert_category'])) {
         $title = strip_tags($_POST['advert_title']);
         $content = strip_tags($_POST['advert_content']);
         $price = intval(strip_tags($_POST['advert_price']));
@@ -34,7 +32,7 @@ if ('POST' != $_SERVER['REQUEST_METHOD']) {
         //         echo 'Error'.$e->getMessage();
         //     }
         // }
-        ajoutAdvert($title, $content, $price, $address ,$city, $category, $user_id);
+        ajoutProduits($title, $content, $price, $address, $city, $user_id);
     }
 }
 

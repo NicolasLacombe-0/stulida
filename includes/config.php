@@ -1,18 +1,4 @@
 <?php
-/*
-    $servername = 'localhost';
-    $username = 'root';
-    $password = '';
-    //On établit la connexion
-    $conn = mysqli_connect($servername, $username, $password);
-    //On vérifie la connexion
-    if (!$conn) {
-        die('Erreur : '.mysqli_connect_error());
-    }
-    echo 'Connexion réussie';
-
-    mysqli_close($conn);
-*/
 
         $servername = 'localhost';
         $dbname = 'stuliday';
@@ -31,7 +17,7 @@
 
         if (isset($_GET['logout'])) {
             session_destroy();
-            header('Location:header.php');
+            header('Location: index.php');
         }
 ?>
 

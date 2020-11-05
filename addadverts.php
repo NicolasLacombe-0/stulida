@@ -1,17 +1,13 @@
 <?php
 $title = 'Adding adverts - Stuliday';
 require 'includes/header.php';
-require 'includes/navbar.php';
 
-$sql = 'SELECT * FROM categories';
-$res = $conn->query($sql);
-$categories = $res->fetchAll();
 ?>
 
 <div class="container">
     <div class="columns">
         <div class="column">
-            <form action="advert.php" method="PSOT">
+            <form action="advert.php" method="PSOT" enctype="multipart/form-data">
 
                 <div class="file">
                     <label class="file-label">
@@ -61,22 +57,6 @@ $categories = $res->fetchAll();
                     <label class="label">Price</label>
                     <div class="control">
                         <input class="input" type="text" placeholder="Price in €" name="advert_price" required>
-                    </div>
-                </div>
-
-                <div class="field">
-                    <label class="label">Category</label>
-                    <div class="control">
-                        <span class="select">
-                            <select name="advert_category" required>
-                                <?php foreach ($categories as $category) { ?>
-                                <option
-                                    value="<?php echo $category['categories_id']; ?>">
-                                    <?php echo $category['categories_name']; ?>
-                                </option>
-                                <?php } ?>
-                            </select>
-                        </span>
                     </div>
                 </div>
 
