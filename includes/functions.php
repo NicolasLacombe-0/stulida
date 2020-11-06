@@ -145,9 +145,12 @@ function affichageProduitsByUser($user_id)
 function affichageProduit($id)
 {
     global $conn;
-    $sth = $conn->prepare("SELECT p.*,u.username FROM adverts AS p LEFT JOIN users AS u ON p.user_id = u.id WHERE p.ads_id = {$id}");
+    $sth = $conn->prepare("SELECT a.*,u.username FROM adverts AS a LEFT JOIN users AS u ON a.user_id = u.id WHERE a.ads_id = {$id}");
+    var_dump($sth);
     $sth->execute();
-
+    if ($sth->execute()) {
+        echo 'execute marche';
+    }
     $product = $sth->fetch(PDO::FETCH_ASSOC); ?>
 <div class="row">
     <div class="col-12">
@@ -165,7 +168,7 @@ function affichageProduit($id)
 <?php
 }
 
-function ajoutProduits($name, $ads_content, $price, $address, $city, $user_id)
+function ajoutProduits($name, $ads_content, $price, $address, $city, $images, $user_id)
 {
     global $conn;
     // Vérification du prix (doit être un entier, et inférieur à 1 million d'euros)
@@ -173,20 +176,23 @@ function ajoutProduits($name, $ads_content, $price, $address, $city, $user_id)
         // Utilisation du try/catch pour capturer les erreurs PDO/SQL
         try {
             // Création de la requête avec tous les champs du formulaire
-            $sth = $conn->prepare('INSERT INTO adverts (ads_title,ads_content,price,address,city,user_id) VALUES (:ads_title, :ads_content, :price, :address, :city, :user_id)');
+            $sth = $conn->prepare('INSERT INTO adverts (ads_title,ads_content,address,city,price,images,user_id) VALUES (:ads_title, :ads_content, :address, :city, :price, :images, :user_id)');
             $sth->bindValue(':ads_title', $name, PDO::PARAM_STR);
             $sth->bindValue(':ads_content', $ads_content, PDO::PARAM_STR);
             $sth->bindValue(':price', $price, PDO::PARAM_INT);
             $sth->bindValue(':address', $address, PDO::PARAM_STR);
             $sth->bindValue(':city', $city, PDO::PARAM_STR);
+            $sth->bindValue(':images', $images, PDO::PARAM_STR);
             $sth->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-
+            echo 'on est dans le try  ';
             // Affichage conditionnel du message de réussite
+
             if ($sth->execute()) {
                 echo "<div class='alert alert-success'> Your advert was successfully added to the database </div>";
                 header('Location: product.php?id='.$conn->lastInsertId());
             }
         } catch (PDOException $e) {
+            echo 'on est dans le catch   ';
             echo 'Error: '.$e->getMessage();
         }
     }

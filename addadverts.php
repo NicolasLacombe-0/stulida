@@ -7,7 +7,7 @@ require 'includes/header.php';
 <div class="container">
     <div class="columns">
         <div class="column">
-            <form action="advert.php" method="PSOT" enctype="multipart/form-data">
+            <form action="process.php" method="POST" enctype="multipart/form-data">
 
                 <div class="file">
                     <label class="file-label">
@@ -24,7 +24,7 @@ require 'includes/header.php';
                 </div>
 
                 <div class="field">
-                    <label class="label">Advert name</label>
+                    <label class="label">Place name</label>
                     <div class="control">
                         <input class="input" type="text" name="advert_title" required>
                     </div>

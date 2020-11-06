@@ -7,14 +7,15 @@ $title = 'Processing - Stuliday';
 if ('POST' != $_SERVER['REQUEST_METHOD']) {
     echo "<div class='alert alert-danger'>ERROR La page à laquelle vous tentez d'accéder n'existe pas</div>";
 } elseif (isset($_POST['advert_submit'])) {
-    if (!empty($_POST['advert_title']) && !empty($_POST['advert_content']) && !empty($_POST['advert_price']) && !empty($_POST['city']) && !empty($_POST['address']) && !empty($_POST['advert_category'])) {
+    echo 'submit marche!   ';
+    if (!empty($_POST['advert_title']) && !empty($_POST['advert_content']) && !empty($_POST['advert_price']) && !empty($_POST['advert_city']) && !empty($_POST['advert_address'])) {
         $title = strip_tags($_POST['advert_title']);
         $content = strip_tags($_POST['advert_content']);
         $price = intval(strip_tags($_POST['advert_price']));
         $address = strip_tags($_POST['advert_address']);
         $city = strip_tags($_POST['advert_city']);
-        $category = strip_tags($_POST['advert_category']);
         $user_id = $_SESSION['id'];
+        $image = '';
         // if (is_int($price) && $price > 0 && $price < 1000000) {
         //     try {
         //         $sth = $conn->prepare('INSERT INTO products (products_name,description,price,city,category_id,user_id) VALUES (:products_name, :description, :price, :city, :category_id, :user_id)');
@@ -32,7 +33,8 @@ if ('POST' != $_SERVER['REQUEST_METHOD']) {
         //         echo 'Error'.$e->getMessage();
         //     }
         // }
-        ajoutProduits($title, $content, $price, $address, $city, $user_id);
+        echo 'ca va faire tourner la fonction!   ';
+        ajoutProduits($title, $content, $price, $address, $city, $image, $user_id);
     }
 }
 
