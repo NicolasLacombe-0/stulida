@@ -4,24 +4,17 @@ $title = 'Adverts - Stuliday';
 require 'includes/header.php';
 ?>
 
-<table class="table table-dark">
-    <thead>
-        <tr>
-            <th scope="col">id</th>
-            <th scope="col">Nom du produit</th>
-            <th scope="col">Description</th>
-            <th scope="col">Prix</th>
-            <th scope="col">Ville</th>
-            <th scope="col">Categorie</th>
-            <th scope="col">Auteur</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php
-            affichageProduits();
-        ?>
-    </tbody>
-</table>
+<div id="places" class="container">
+    <h3 class="title is-4 is-spaced has-text-centered">Places to stay</h3>
+
+    <div class="columns is-multiline  is-centered">
+        <div class="column auto">
+            <?php
+                affichagePlaces();
+            ?>
+        </div>
+    </div>
+</div>
 
 <?php
 require 'includes/footer.php';

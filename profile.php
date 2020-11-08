@@ -9,27 +9,39 @@ $res = $conn->query($sql);
 $user = $res->fetch(PDO::FETCH_ASSOC);
 
 ?>
-<div class="row">
-    <div class="col-8">
-        <table class="table table-dark">
-            <thead>
-                <tr>
-                    <th scope="col">id</th>
-                    <th scope="col">Advert name</th>
-                    <th scope="col">Content</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">City</th>
-                    <th scope="col" colspan=3>Functions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                    affichageProduitsByUser($user_id);
-                ?>
-            </tbody>
-        </table>
+
+<div class="container">
+    <div class="columns is-centered">
+        <div class="column is-half">
+            <h3 class="title is-3 is-spaced">Welcome <?php echo $user['username']; ?>
+            </h3>
+        </div>
     </div>
+    <div class="columns is-centered">
+        <div class="column is-half">
+            <h3 class="title is-5 is-spaced">Manage your Adverts :</h3>
+            <table class="table table-warning">
+                <thead>
+                    <tr>
+                        <th scope="col">id</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">City</th>
+                        <th scope="col" colspan=3>Fonctions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                        affichageProduitsByUser($user['id']);
+                    ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 </div>
+
 
 <?php
 require 'includes/footer.php';

@@ -17,12 +17,11 @@ require 'includes/functions.php';
 </head>
 
 <body>
-    <nav class="navbar" role="navigation" aria-label="main navigation">
+    <nav class="navbar is-warning" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item" href="index.php">
                 <img src="images/stuliday-logo-dark.png" width=50 height=50>
             </a>
-
             <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
                 data-target="navbarBasicExample">
                 <span aria-hidden="true"></span>
@@ -37,9 +36,9 @@ require 'includes/functions.php';
                     Home
                 </a>
 
-                <!-- <a class="navbar-item">
+                <a class="navbar-item" href="adverts.php">
                     Places to stay
-                </a> -->
+                </a>
             </div>
 
             <div class="navbar-end">

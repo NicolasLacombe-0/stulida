@@ -5,8 +5,8 @@ require 'includes/header.php';
 ?>
 
 <div class="container">
-    <div class="columns">
-        <div class="column">
+    <div class="columns is-centered">
+        <div class="column is-half">
             <form action="process.php" method="POST" enctype="multipart/form-data">
 
                 <div class="file">
@@ -31,7 +31,7 @@ require 'includes/header.php';
                 </div>
 
                 <div class="field">
-                    <label class="label">Content</label>
+                    <label class="label">Description</label>
                     <div class="control">
                         <textarea class="textarea" placeholder="Advert content" name="advert_content"
                             required></textarea>

@@ -69,35 +69,30 @@ function login($email_login, $password_login)
     }
 }
 
-function affichageProduits()
+function affichagePlaces()
 {
     global $conn;
-    $sth = $conn->prepare('SELECT p.*,u.username FROM adverts AS p LEFT JOIN users AS u ON p.user_id = u.id');
+    $sth = $conn->prepare('SELECT * FROM adverts');
     $sth->execute();
 
-    $ads = $sth->fetchAll(PDO::FETCH_ASSOC);
-    foreach ($ads as $product) {
-        ?>
-<tr>
-    <th scope="row"><?php echo $product['ads_id']; ?>
-    </th>
-    <td><?php echo $product['ads_title']; ?>
-    </td>
-    <td><?php echo $product['ads_content']; ?>
-    </td>
-    <td><?php echo $product['address']; ?>
-    </td>
-    <td><?php echo $product['city']; ?>
-    </td>
-    <td><?php echo $product['price']; ?> €
-    </td>
-    <td><?php echo $product['username']; ?>
-    </td>
-    <td> <a
-            href="product.php?id=<?php echo $product['ads_id']; ?>">Afficher
-            article</a>
-    </td>
-</tr>
+    $adverts = $sth->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($adverts as $advert) {?>
+
+<div class="column is-two-fifths">
+    <h4 class="title is-5 is-spaced">
+        <?php echo $advert['ads_title']; ?>
+    </h4>
+    <p>
+        <?php echo $advert['ads_content']; ?>
+    </p>
+    <p>
+        <?php echo $advert['city']; ?>
+    </p>
+    <a class="button is-outlined"
+        href="place.php?id=<?php echo $advert['ads_id']; ?>">View
+        place</a>
+
+</div>
 <?php
     }
 }
@@ -105,9 +100,9 @@ function affichageProduits()
 function affichageProduitsByUser($user_id)
 {
     global $conn;
-    $sth = $conn->prepare("SELECT p.* FROM adverts AS p WHERE p.user_id = {$user_id}");
+    $sth = $conn->prepare("SELECT * FROM adverts LEFT JOIN users = adverts.user_id WHERE user_id = {$user_id}");
     $sth->execute();
-
+    echo 'on est allé jusquau execute';
     $ads = $sth->fetchAll(PDO::FETCH_ASSOC);
     foreach ($ads as $product) {
         ?>
@@ -125,16 +120,16 @@ function affichageProduitsByUser($user_id)
     <td><?php echo $product['price']; ?> €
     </td>
     <td> <a href="product.php?id=<?php echo $product['ads_id']; ?>"
-            class="button is-success">Display</a>
+            class="btn btn-success">Display</a>
     </td>
     <td> <a href="editads.php?id=<?php echo $product['ads_id']; ?>"
-            class="button is-warning">Edit</a>
+            class="btn btn-warning">Edit</a>
     </td>
     <td>
         <form action="process.php" method="post">
             <input type="hidden" name="product_id"
                 value="<?php echo $product['ads_id']; ?>">
-            <input type="submit" name="product_delete" class="button is-danger" value="Delete" />
+            <input type="submit" name="product_delete" class="btn btn-danger" value="Delete" />
         </form>
     </td>
 </tr>
@@ -142,27 +137,31 @@ function affichageProduitsByUser($user_id)
     }
 }
 
-function affichageProduit($id)
+function affichagePlace($id)
 {
     global $conn;
-    $sth = $conn->prepare("SELECT a.*,u.username FROM adverts AS a LEFT JOIN users AS u ON a.user_id = u.id WHERE a.ads_id = {$id}");
-    var_dump($sth);
+    $sth = $conn->prepare("SELECT * FROM adverts WHERE ads_id={$id}");
     $sth->execute();
-    if ($sth->execute()) {
-        echo 'execute marche';
-    }
-    $product = $sth->fetch(PDO::FETCH_ASSOC); ?>
-<div class="row">
-    <div class="col-12">
-        <h1><?php echo $product['ads_title']; ?>
-        </h1>
-        <p><?php echo $product['ads_content']; ?>
+
+    $advert = $sth->fetch(PDO::FETCH_ASSOC); ?>
+
+<h1 class="title is-4 is-spaced has-text-centered">
+    <?php echo $advert['ads_title']; ?>
+</h1>
+<div class="columns">
+    <!-- <div class="column is-one-fifth"></div> -->
+    <div class="column is-one-third">
+        <p><?php echo $advert['ads_content']; ?>
         </p>
-        <p><?php echo $product['address']; ?>
+
+    </div>
+    <div class="column is-one-fifth has-text-right">
+        <p><?php echo $advert['address']; ?>
         </p>
-        <p><?php echo $product['city']; ?>
+        <p><?php echo $advert['city']; ?>
         </p>
-        <button class="btn btn-danger"><?php echo $product['price']; ?> € </button>
+        <p class="btn btn-danger"><?php echo $advert['price'].' €'; ?>
+        </p>
     </div>
 </div>
 <?php
