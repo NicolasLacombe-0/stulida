@@ -78,7 +78,7 @@ function affichagePlaces()
     $adverts = $sth->fetchAll(PDO::FETCH_ASSOC);
     foreach ($adverts as $advert) {?>
 
-<div class="column is-two-fifths">
+<div class="column is-one-quarter is-offset-1" style='margin-top:6%; margin-left:0%'>
     <h4 class="title is-5 is-spaced">
         <?php echo $advert['ads_title']; ?>
     </h4>
@@ -88,48 +88,46 @@ function affichagePlaces()
     <p>
         <?php echo $advert['city']; ?>
     </p>
-    <a class="button is-outlined"
-        href="place.php?id=<?php echo $advert['ads_id']; ?>">View
+    <a class="button is-outlined is-danger" style="margin:5%"
+        href="advert.php?id=<?php echo $advert['ads_id']; ?>">View
         place</a>
-
 </div>
 <?php
     }
 }
 
-function affichageProduitsByUser($user_id)
+function affichagePlacesByUser($id)
 {
     global $conn;
-    $sth = $conn->prepare("SELECT * FROM adverts LEFT JOIN users = adverts.user_id WHERE user_id = {$user_id}");
+    $sth = $conn->prepare("SELECT * FROM adverts INNER JOIN users ON users.id = adverts.user_id WHERE user_id = {$id}");
     $sth->execute();
-    echo 'on est allé jusquau execute';
     $ads = $sth->fetchAll(PDO::FETCH_ASSOC);
-    foreach ($ads as $product) {
+    foreach ($ads as $place) {
         ?>
 <tr>
-    <th scope="row"><?php echo $product['ads_id']; ?>
+    <th scope="row"><?php echo $place['ads_id']; ?>
     </th>
-    <td><?php echo $product['ads_title']; ?>
+    <td><?php echo $place['ads_title']; ?>
     </td>
-    <td><?php echo $product['ads_content']; ?>
+    <td><?php echo $place['ads_content']; ?>
     </td>
-    <td><?php echo $product['address']; ?> €
+    <td><?php echo $place['address']; ?> €
     </td>
-    <td><?php echo $product['city']; ?>
+    <td><?php echo $place['city']; ?>
     </td>
-    <td><?php echo $product['price']; ?> €
+    <td><?php echo $place['price']; ?> €
     </td>
-    <td> <a href="product.php?id=<?php echo $product['ads_id']; ?>"
+    <td> <a href="advert.php?id=<?php echo $place['ads_id']; ?>"
             class="btn btn-success">Display</a>
     </td>
-    <td> <a href="editads.php?id=<?php echo $product['ads_id']; ?>"
+    <td> <a href="editadverts.php?id=<?php echo $place['ads_id']; ?>"
             class="btn btn-warning">Edit</a>
     </td>
     <td>
         <form action="process.php" method="post">
-            <input type="hidden" name="product_id"
-                value="<?php echo $product['ads_id']; ?>">
-            <input type="submit" name="product_delete" class="btn btn-danger" value="Delete" />
+            <input type="hidden" name="ads_id"
+                value="<?php echo $place['ads_id']; ?>">
+            <input type="submit" name="place_delete" class="btn btn-danger" value="Delete" />
         </form>
     </td>
 </tr>
@@ -145,22 +143,28 @@ function affichagePlace($id)
 
     $advert = $sth->fetch(PDO::FETCH_ASSOC); ?>
 
-<h1 class="title is-4 is-spaced has-text-centered">
+<h1 class="title is-4 is-spaced has-text-centered" style="margin-top:3%">
     <?php echo $advert['ads_title']; ?>
 </h1>
 <div class="columns">
     <!-- <div class="column is-one-fifth"></div> -->
-    <div class="column is-one-third">
-        <p><?php echo $advert['ads_content']; ?>
+    <div class="column is-one-third has-text-centered">
+        <p>
+            <?php echo $advert['ads_content']; ?>
         </p>
 
     </div>
     <div class="column is-one-fifth has-text-right">
-        <p><?php echo $advert['address']; ?>
+        <p>
+            <?php echo $advert['address']; ?>
         </p>
-        <p><?php echo $advert['city']; ?>
+        <p>
+            <?php echo $advert['city']; ?>
         </p>
         <p class="btn btn-danger"><?php echo $advert['price'].' €'; ?>
+        </p>
+        <p>
+            <?php echo "<img src='./images/".$advert['images']."'; alt='advert image'>"; ?>
         </p>
     </div>
 </div>
@@ -188,7 +192,51 @@ function ajoutProduits($name, $ads_content, $price, $address, $city, $images, $u
 
             if ($sth->execute()) {
                 echo "<div class='alert alert-success'> Your advert was successfully added to the database </div>";
-                header('Location: product.php?id='.$conn->lastInsertId());
+                header('Location: advert.php?id='.$conn->lastInsertId());
+            }
+
+            if (isset($_FILES['advert_images'])) {
+                $file = $_FILES['advert_images'];
+                if ($file['size'] <= 1000000) {
+                    $valid_ext = ['jpg', 'jpeg', 'gif', 'png'];
+                    $check_ext = strtolower(substr(strrchr($file['name'], '.'), 1));
+                    if (in_array($check_ext, $valid_ext)) {
+                        $dbname = uniqid().'_'.$file['name'];
+                        $upload_dir = 'imgupload/';
+                        $upload_name = $upload_dir.$dbname;
+                        $move_result = move_uploaded_file($file['tmp_name'], $upload_name);
+                        $img = $dbname;
+                        echo '<div class="alert alert-success mt-2" role="alert" > You have Succesfully Upload your Image !</div>';
+                    } else {
+                        // TEMP SPEECH FIND BETTER !!!
+                        $img = '';
+                        echo '<div class="alert alert-success mt-2" role="alert" > Upload Image Fail, please check the extension / size !</div>';
+                    }
+                }
+            }
+            $sth->bindValue(':images', $img, PDO::PARAM_STR);
+
+            //ajout d'image au fichier images
+            if (!empty($_POST['advert_image'])) {
+                $target_dir = 'images/';
+                $target_file = $target_dir.basename($_FILES['advert_image']['name']);
+                $uploadOk = 1;
+                $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+                // Check if image file is a actual image or fake image
+
+                if (isset($_POST['advert_submit'])) {
+                    $check = getimagesize($_FILES['fileToUpload']['tmp_name']);
+                    if (false !== $check) {
+                        echo 'File is an image - '.$check['mime'].'.';
+                        $uploadOk = 1;
+                    } else {
+                        echo 'File is not an image.';
+                        $uploadOk = 0;
+                    }
+                }
+            }
+            if (isset($_FILES['advert_image'])) {
+                var_dump($_FILES['advert_image']);
             }
         } catch (PDOException $e) {
             echo 'on est dans le catch   ';
@@ -197,25 +245,44 @@ function ajoutProduits($name, $ads_content, $price, $address, $city, $images, $u
     }
 }
 
-function modifProduits($name, $ads_content, $price, $address, $city, $id, $user_id)
+function modifPlaces($name, $ads_content, $price, $address, $city, $images, $id, $user_id)
 {
     global $conn;
     if (is_int($price) && $price > 0 && $price < 1000000) {
         try {
-            $sth = $conn->prepare('UPDATE adverts SET ads_title=:ads_title, ads_content=:ads_content, price=:price,address=:address,city=:city WHERE ads_id=:ads_id AND user_id=:user_id');
+            $sth = $conn->prepare('UPDATE adverts SET ads_title=:ads_title, ads_content=:ads_content, price=:price,address=:address,city=:city,images=:images WHERE ads_id=:ads_id AND user_id=:user_id');
             $sth->bindValue(':ads_title', $name);
             $sth->bindValue(':ads_content', $ads_content);
             $sth->bindValue(':price', $price);
             $sth->bindValue(':address', $address);
             $sth->bindValue(':city', $city);
+            $sth->bindValue(':images', $images);
             $sth->bindValue(':ads_id', $id);
             $sth->bindValue(':user_id', $user_id);
             if ($sth->execute()) {
                 echo "<div class='alert alert-success'> Successfully modified </div>";
-                header("Location: product.php?id={$id}");
+                header("Location: advert.php?id={$id}");
             }
         } catch (PDOException $e) {
             echo 'Error: '.$e->getMessage();
         }
+    }
+}
+
+function suppPlaces($user_id, $place_id)
+{
+    // Récupération de la connexion à la BDD à partir de l'espace global.
+    global $conn;
+
+    // Tentative de la requête de suppression.
+    try {
+        $sth = $conn->prepare('DELETE FROM adverts WHERE ads_id = :ads_id AND user_id =:user_id');
+        $sth->bindValue(':ads_id', $place_id);
+        $sth->bindValue(':user_id', $user_id);
+        if ($sth->execute()) {
+            header('Location: profile.php?s');
+        }
+    } catch (PDOException $e) {
+        echo 'Error: '.$e->getMessage();
     }
 }

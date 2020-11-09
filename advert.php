@@ -3,6 +3,6 @@
 $title = 'Advert - Stuliday';
 require 'includes/header.php';
 
-affichageProduit($_GET['id']);
+affichagePlace($_GET['id']);
 
 require 'includes/footer.php';

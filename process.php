@@ -5,7 +5,7 @@ require 'includes/header.php';
 $title = 'Processing - Stuliday';
 
 if ('POST' != $_SERVER['REQUEST_METHOD']) {
-    echo "<div class='alert alert-danger'>ERROR La page à laquelle vous tentez d'accéder n'existe pas</div>";
+    echo "<div class='alert alert-danger'>ERROR The page doesn't exist !</div>";
 } elseif (isset($_POST['advert_submit'])) {
     echo 'submit marche!   ';
     if (!empty($_POST['advert_title']) && !empty($_POST['advert_content']) && !empty($_POST['advert_price']) && !empty($_POST['advert_city']) && !empty($_POST['advert_address'])) {
@@ -15,7 +15,7 @@ if ('POST' != $_SERVER['REQUEST_METHOD']) {
         $address = strip_tags($_POST['advert_address']);
         $city = strip_tags($_POST['advert_city']);
         $user_id = $_SESSION['id'];
-        $image = '';
+        $image = $_FILES['advert_image']['name'];
         // if (is_int($price) && $price > 0 && $price < 1000000) {
         //     try {
         //         $sth = $conn->prepare('INSERT INTO products (products_name,description,price,city,category_id,user_id) VALUES (:products_name, :description, :price, :city, :category_id, :user_id)');
@@ -36,6 +36,30 @@ if ('POST' != $_SERVER['REQUEST_METHOD']) {
         echo 'ca va faire tourner la fonction!   ';
         ajoutProduits($title, $content, $price, $address, $city, $image, $user_id);
     }
+} elseif (isset($_POST['advert_edit'])) {
+    echo 'ca va jusqua edit';
+    // Vérification back-end du formulaire d'édition
+    if (!empty($_POST['ads_title']) && !empty($_POST['ads_content']) && !empty($_POST['price']) && !empty($_POST['city']) && !empty($_POST['address'])) {
+        // Définition des variables
+        $name = strip_tags($_POST['ads_title']);
+        $description = strip_tags($_POST['ads_content']);
+        $price = intval(strip_tags($_POST['price']));
+        $address = strip_tags($_POST['address']);
+        $city = strip_tags($_POST['city']);
+        // Assigne la variable user_id à partir du token de session
+        $user_id = $_SESSION['id'];
+        $id = strip_tags($_POST['ads_id']);
+        $image = $_FILES['advert_image']['name'];
+        echo 'ca va jusqua modif';
+        modifPlaces($name, $description, $price, $address, $city, $image, $id, $user_id);
+    }
+} elseif (isset($_POST['place_delete'])) {
+    $place = $_POST['ads_id'];
+    $user_id = $_SESSION['id'];
+
+    suppPlaces($user_id, $place);
+} else {
+    echo 'Cannot add the advert';
 }
 
 require 'includes/footer.php';

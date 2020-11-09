@@ -4,12 +4,13 @@ require 'includes/header.php';
 
 ?>
 
+
 <div class="container">
     <div class="columns is-centered">
         <div class="column is-half">
             <form action="process.php" method="POST" enctype="multipart/form-data">
 
-                <div class="file">
+                <div class="file has-name">
                     <label class="file-label">
                         <input class="file-input" type="file" name="advert_image">
                         <span class="file-cta">
@@ -17,8 +18,11 @@ require 'includes/header.php';
                                 <i class="fas fa-upload"></i>
                             </span>
                             <span class="file-label">
-                                Choose a file for the image…
+                                Choose a file…
                             </span>
+                        </span>
+                        <span class="file-name">
+                            Screen Shot 2017-07-29 at 15.54.25.png
                         </span>
                     </label>
                 </div>
@@ -59,8 +63,6 @@ require 'includes/header.php';
                         <input class="input" type="text" placeholder="Price in €" name="advert_price" required>
                     </div>
                 </div>
-
-
 
                 <div class="control">
                     <button class="button is-primary" name="advert_submit">Submit advert</button>

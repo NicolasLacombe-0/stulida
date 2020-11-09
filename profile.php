@@ -7,13 +7,13 @@ $user_id = $_SESSION['id'];
 $sql = "SELECT * FROM users WHERE id = '{$user_id}'";
 $res = $conn->query($sql);
 $user = $res->fetch(PDO::FETCH_ASSOC);
-
+//var_dump($user['id']);
 ?>
 
 <div class="container">
     <div class="columns is-centered">
         <div class="column is-half">
-            <h3 class="title is-3 is-spaced">Welcome <?php echo $user['username']; ?>
+            <h3 class="title is-3 is-spaced" style="margin-top:5%">Welcome <?php echo $user['username']; ?>
             </h3>
         </div>
     </div>
@@ -33,7 +33,7 @@ $user = $res->fetch(PDO::FETCH_ASSOC);
                 </thead>
                 <tbody>
                     <?php
-                        affichageProduitsByUser($user['id']);
+                        affichagePlacesByUser($user_id);
                     ?>
                 </tbody>
             </table>
