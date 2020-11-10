@@ -69,6 +69,25 @@ function login($email_login, $password_login)
     }
 }
 
+function editProfile($username, $id)
+{
+    global $conn;
+
+    try {
+        $sth = $conn->prepare('UPDATE users SET username=:username WHERE id=:id');
+        $sth->bindValue(':username', $username);
+        $sth->bindValue(':id', $id);
+
+        if ($sth->execute()) {
+            header('Location: profile.php?p');
+            echo '<div class="has-text-success"> Successfully changed your username </div>';
+        }
+    } catch (PDOException $e) {
+        echo 'Error: '.$e->getMessage();
+    }
+}
+
+//affichage des annonces dans Places to Stay
 function affichagePlaces()
 {
     global $conn;
@@ -79,23 +98,29 @@ function affichagePlaces()
     foreach ($adverts as $advert) {?>
 
 <div class="column is-one-quarter is-offset-1" style='margin-top:6%; margin-left:0%'>
-    <h4 class="title is-5 is-spaced">
-        <?php echo $advert['ads_title']; ?>
-    </h4>
-    <p>
-        <?php echo $advert['ads_content']; ?>
-    </p>
-    <p>
-        <?php echo $advert['city']; ?>
-    </p>
-    <a class="button is-outlined is-danger" style="margin:5%"
-        href="advert.php?id=<?php echo $advert['ads_id']; ?>">View
-        place</a>
+    <div class="box">
+        <div class="box"
+            style="background-image: url(<?php echo './images/'.$advert['images']; ?>); background-size:cover; height:25vh">
+        </div>
+        <h4 class="title is-5 is-spaced">
+            <?php echo $advert['ads_title']; ?>
+        </h4>
+        <p>
+            <?php echo $advert['ads_content']; ?>
+        </p>
+        <p>
+            <?php echo $advert['city']; ?>
+        </p>
+        <a class="button is-outlined is-danger" style="margin:5%"
+            href="advert.php?id=<?php echo $advert['ads_id']; ?>">View
+            place</a>
+    </div>
 </div>
 <?php
     }
 }
 
+//affichage des annonces dans la page de profil
 function affichagePlacesByUser($id)
 {
     global $conn;
@@ -111,23 +136,23 @@ function affichagePlacesByUser($id)
     </td>
     <td><?php echo $place['ads_content']; ?>
     </td>
-    <td><?php echo $place['address']; ?> €
+    <td><?php echo $place['address']; ?>
     </td>
     <td><?php echo $place['city']; ?>
     </td>
-    <td><?php echo $place['price']; ?> €
+    <td><?php echo $place['price']; ?>€
     </td>
     <td> <a href="advert.php?id=<?php echo $place['ads_id']; ?>"
-            class="btn btn-success">Display</a>
+            class="button is-success is-outlined">Display</a>
     </td>
     <td> <a href="editadverts.php?id=<?php echo $place['ads_id']; ?>"
-            class="btn btn-warning">Edit</a>
+            class="button is-warning is-outlined">Edit</a>
     </td>
     <td>
         <form action="process.php" method="post">
             <input type="hidden" name="ads_id"
                 value="<?php echo $place['ads_id']; ?>">
-            <input type="submit" name="place_delete" class="btn btn-danger" value="Delete" />
+            <input type="submit" name="place_delete" class="button is-danger is-outlined" value="Delete" />
         </form>
     </td>
 </tr>
@@ -135,6 +160,7 @@ function affichagePlacesByUser($id)
     }
 }
 
+// display de chaque annonce indépendamment
 function affichagePlace($id)
 {
     global $conn;
@@ -147,27 +173,38 @@ function affichagePlace($id)
     <?php echo $advert['ads_title']; ?>
 </h1>
 <div class="columns">
-    <!-- <div class="column is-one-fifth"></div> -->
-    <div class="column is-one-third has-text-centered">
-        <p>
-            <?php echo $advert['ads_content']; ?>
-        </p>
-
-    </div>
-    <div class="column is-one-fifth has-text-right">
-        <p>
-            <?php echo $advert['address']; ?>
-        </p>
-        <p>
-            <?php echo $advert['city']; ?>
-        </p>
-        <p class="btn btn-danger"><?php echo $advert['price'].' €'; ?>
-        </p>
+    <div class="column is-one-third offset-1"></div>
+    <div class="column is-one-third">
         <p>
             <?php echo "<img src='./images/".$advert['images']."'; alt='advert image'>"; ?>
         </p>
     </div>
 </div>
+<div class="columns">
+    <!-- <div class="column is-one-fifth"></div> -->
+    <div class="column is-one-fifth offset-1"></div>
+
+    <div class="column is-one-third has-text-centered ">
+        <p>
+            <?php echo $advert['ads_content']; ?>
+        </p>
+
+    </div>
+    <div class="column is-one-fifth has-text-left ">
+        <div class="box">
+            <?php echo $advert['address']; ?>
+            </p>
+            <p style="margin:5% 0%">
+                <?php echo $advert['city']; ?>
+            </p>
+            <p class="button is-danger"><?php echo $advert['price'].' €'; ?>
+            </p>
+        </div>
+        <p>
+    </div>
+</div>
+
+
 <?php
 }
 
@@ -185,58 +222,35 @@ function ajoutProduits($name, $ads_content, $price, $address, $city, $images, $u
             $sth->bindValue(':price', $price, PDO::PARAM_INT);
             $sth->bindValue(':address', $address, PDO::PARAM_STR);
             $sth->bindValue(':city', $city, PDO::PARAM_STR);
-            $sth->bindValue(':images', $images, PDO::PARAM_STR);
             $sth->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-            echo 'on est dans le try  ';
+            //echo 'on est dans le try  ';
             // Affichage conditionnel du message de réussite
+
+            //upload image
+            if (!empty($images)) {
+                if ($images['size'] <= 1000000) {
+                    $valid_ext = ['jpg', 'jpeg', 'gif', 'png'];
+                    $check_ext = strtolower(substr(strrchr($images['name'], '.'), 1));
+                    if (in_array($check_ext, $valid_ext)) {
+                        $dbname = uniqid().'_'.$images['name'];
+                        $upload_dir = 'images/';
+                        $upload_name = $upload_dir.$dbname;
+                        $move_result = move_uploaded_file($images['tmp_name'], $upload_name);
+                        $images = $dbname;
+                        echo '<div class="alert alert-success mt-2" role="alert" > You have Successfully Uploaded your Image !</div>';
+                    } else {
+                        // TEMP SPEECH FIND BETTER !!!
+                        $images = '';
+                        echo '<div class="alert alert-success mt-2" role="alert" > Image Upload Failed, please check the extension / size !</div>';
+                    }
+                }
+            }
+
+            $sth->bindValue(':images', $images, PDO::PARAM_STR);
 
             if ($sth->execute()) {
                 echo "<div class='alert alert-success'> Your advert was successfully added to the database </div>";
                 header('Location: advert.php?id='.$conn->lastInsertId());
-            }
-
-            if (isset($_FILES['advert_images'])) {
-                $file = $_FILES['advert_images'];
-                if ($file['size'] <= 1000000) {
-                    $valid_ext = ['jpg', 'jpeg', 'gif', 'png'];
-                    $check_ext = strtolower(substr(strrchr($file['name'], '.'), 1));
-                    if (in_array($check_ext, $valid_ext)) {
-                        $dbname = uniqid().'_'.$file['name'];
-                        $upload_dir = 'imgupload/';
-                        $upload_name = $upload_dir.$dbname;
-                        $move_result = move_uploaded_file($file['tmp_name'], $upload_name);
-                        $img = $dbname;
-                        echo '<div class="alert alert-success mt-2" role="alert" > You have Succesfully Upload your Image !</div>';
-                    } else {
-                        // TEMP SPEECH FIND BETTER !!!
-                        $img = '';
-                        echo '<div class="alert alert-success mt-2" role="alert" > Upload Image Fail, please check the extension / size !</div>';
-                    }
-                }
-            }
-            $sth->bindValue(':images', $img, PDO::PARAM_STR);
-
-            //ajout d'image au fichier images
-            if (!empty($_POST['advert_image'])) {
-                $target_dir = 'images/';
-                $target_file = $target_dir.basename($_FILES['advert_image']['name']);
-                $uploadOk = 1;
-                $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-                // Check if image file is a actual image or fake image
-
-                if (isset($_POST['advert_submit'])) {
-                    $check = getimagesize($_FILES['fileToUpload']['tmp_name']);
-                    if (false !== $check) {
-                        echo 'File is an image - '.$check['mime'].'.';
-                        $uploadOk = 1;
-                    } else {
-                        echo 'File is not an image.';
-                        $uploadOk = 0;
-                    }
-                }
-            }
-            if (isset($_FILES['advert_image'])) {
-                var_dump($_FILES['advert_image']);
             }
         } catch (PDOException $e) {
             echo 'on est dans le catch   ';
@@ -256,9 +270,30 @@ function modifPlaces($name, $ads_content, $price, $address, $city, $images, $id,
             $sth->bindValue(':price', $price);
             $sth->bindValue(':address', $address);
             $sth->bindValue(':city', $city);
-            $sth->bindValue(':images', $images);
             $sth->bindValue(':ads_id', $id);
             $sth->bindValue(':user_id', $user_id);
+
+            if (!empty($images)) {
+                if ($images['size'] <= 1000000) {
+                    $valid_ext = ['jpg', 'jpeg', 'gif', 'png'];
+                    $check_ext = strtolower(substr(strrchr($images['name'], '.'), 1));
+                    if (in_array($check_ext, $valid_ext)) {
+                        $dbname = uniqid().'_'.$images['name'];
+                        $upload_dir = 'images/';
+                        $upload_name = $upload_dir.$dbname;
+                        $move_result = move_uploaded_file($images['tmp_name'], $upload_name);
+                        $images = $dbname;
+                        echo '<div class="alert alert-success mt-2" role="alert" > You have Successfully Uploaded your Image !</div>';
+                    } else {
+                        // TEMP SPEECH FIND BETTER !!!
+                        $images = '';
+                        echo '<div class="alert alert-success mt-2" role="alert" > Image Upload Failed, please check the extension / size !</div>';
+                    }
+                }
+            }
+
+            $sth->bindValue(':images', $images, PDO::PARAM_STR);
+
             if ($sth->execute()) {
                 echo "<div class='alert alert-success'> Successfully modified </div>";
                 header("Location: advert.php?id={$id}");
@@ -281,6 +316,24 @@ function suppPlaces($user_id, $place_id)
         $sth->bindValue(':user_id', $user_id);
         if ($sth->execute()) {
             header('Location: profile.php?s');
+        }
+    } catch (PDOException $e) {
+        echo 'Error: '.$e->getMessage();
+    }
+}
+
+function affichageReservationByUser($book_id, $user_id)
+{
+    global $conn;
+    $book_name = 'reservation n°'.random_int(1, 1000000);
+
+    try {
+        $sth = $conn->prepare('INSERT INTO reservations (bookname,book_client,book_advert_fk) VALUES (:bookname,:book_client,:book_advert_fk)');
+        $sth->bindValue(':bookname', $book_name);
+        $sth->bindValue(':book_client', $user_id);
+        $sth->bindValue(':book_advert_fk', $book_id);
+        if ($sth->execute()) {
+            header('Location: reservations.php');
         }
     } catch (PDOException $e) {
         echo 'Error: '.$e->getMessage();

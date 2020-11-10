@@ -1,7 +1,8 @@
 <?php
+$title = 'Sign In - Stuliday';
 //require 'includes/config.php';
 require 'includes/header.php';
-var_dump($_SESSION);
+//var_dump($_SESSION);
 
 if (isset($_POST['submit_signup']) && !empty($_POST['email_signup']) && !empty($_POST['password1_signup'])) {
     $email = htmlspecialchars($_POST['email_signup']);
@@ -26,7 +27,7 @@ if (isset($_POST['submit_signup']) && !empty($_POST['email_signup']) && !empty($
 
 
 
-<div class="container">
+<div class="container" style="margin-top: 3%;">
     <div class="columns">
         <div class="column">
 
@@ -45,7 +46,7 @@ if (isset($_POST['submit_signup']) && !empty($_POST['email_signup']) && !empty($
                 </div>
 
                 <div class="field">
-                    <label class="label">Fullname</label>
+                    <label class="label">Username</label>
                     <div class="control has-icons-left has-icons-right">
                         <input class="input " type="username" placeholder="Choose a username" value=""
                             name="username_signup">

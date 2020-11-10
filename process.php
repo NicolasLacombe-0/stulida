@@ -7,7 +7,7 @@ $title = 'Processing - Stuliday';
 if ('POST' != $_SERVER['REQUEST_METHOD']) {
     echo "<div class='alert alert-danger'>ERROR The page doesn't exist !</div>";
 } elseif (isset($_POST['advert_submit'])) {
-    echo 'submit marche!   ';
+    //echo 'submit marche!   ';
     if (!empty($_POST['advert_title']) && !empty($_POST['advert_content']) && !empty($_POST['advert_price']) && !empty($_POST['advert_city']) && !empty($_POST['advert_address'])) {
         $title = strip_tags($_POST['advert_title']);
         $content = strip_tags($_POST['advert_content']);
@@ -15,7 +15,8 @@ if ('POST' != $_SERVER['REQUEST_METHOD']) {
         $address = strip_tags($_POST['advert_address']);
         $city = strip_tags($_POST['advert_city']);
         $user_id = $_SESSION['id'];
-        $image = $_FILES['advert_image']['name'];
+        $image = $_FILES['advert_image'];
+        //var_dump($image);
         // if (is_int($price) && $price > 0 && $price < 1000000) {
         //     try {
         //         $sth = $conn->prepare('INSERT INTO products (products_name,description,price,city,category_id,user_id) VALUES (:products_name, :description, :price, :city, :category_id, :user_id)');
@@ -33,11 +34,11 @@ if ('POST' != $_SERVER['REQUEST_METHOD']) {
         //         echo 'Error'.$e->getMessage();
         //     }
         // }
-        echo 'ca va faire tourner la fonction!   ';
+        //echo 'ca va faire tourner la fonction!   ';
         ajoutProduits($title, $content, $price, $address, $city, $image, $user_id);
     }
 } elseif (isset($_POST['advert_edit'])) {
-    echo 'ca va jusqua edit';
+    //echo 'ca va jusqua edit';
     // Vérification back-end du formulaire d'édition
     if (!empty($_POST['ads_title']) && !empty($_POST['ads_content']) && !empty($_POST['price']) && !empty($_POST['city']) && !empty($_POST['address'])) {
         // Définition des variables
@@ -49,8 +50,8 @@ if ('POST' != $_SERVER['REQUEST_METHOD']) {
         // Assigne la variable user_id à partir du token de session
         $user_id = $_SESSION['id'];
         $id = strip_tags($_POST['ads_id']);
-        $image = $_FILES['advert_image']['name'];
-        echo 'ca va jusqua modif';
+        $image = $_FILES['advert_image'];
+        //echo 'ca va jusqua modif';
         modifPlaces($name, $description, $price, $address, $city, $image, $id, $user_id);
     }
 } elseif (isset($_POST['place_delete'])) {
@@ -58,6 +59,13 @@ if ('POST' != $_SERVER['REQUEST_METHOD']) {
     $user_id = $_SESSION['id'];
 
     suppPlaces($user_id, $place);
+} elseif (isset($_POST['user_edit'])) {
+    $username = $_POST['username'];
+    editProfile($username, $_SESSION['id']);
+} elseif (isset($_POST['book_submit'])) {
+    $user_id = $_SESSION['id'];
+    $book_id = $_POST['book_id'];
+    affichageReservationByUser($book_id, $user_id);
 } else {
     echo 'Cannot add the advert';
 }

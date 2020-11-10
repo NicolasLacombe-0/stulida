@@ -22,7 +22,7 @@ require 'includes/header.php';
                             </span>
                         </span>
                         <span class="file-name">
-                            Screen Shot 2017-07-29 at 15.54.25.png
+                            yourimage.png
                         </span>
                     </label>
                 </div>
@@ -37,8 +37,8 @@ require 'includes/header.php';
                 <div class="field">
                     <label class="label">Description</label>
                     <div class="control">
-                        <textarea class="textarea" placeholder="Advert content" name="advert_content"
-                            required></textarea>
+                        <textarea class="textarea" style="resize:none" placeholder="Advert content"
+                            name="advert_content" required></textarea>
                     </div>
                 </div>
 
